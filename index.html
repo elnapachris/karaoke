@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cola de Karaoke - Cumpleaños</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffefd5;
+            text-align: center;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #ffcc00;
+            padding: 20px;
+            color: white;
+            font-size: 24px;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            margin: 10px;
+            width: 80%;
+            max-width: 300px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #ff8533;
+        }
+        .admin-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #cc0000;
+        }
+        footer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        🎉 ¡Bienvenidos al Karaoke de Cumpleaños! 🎉
+    </header>
+    
+    <div class="container">
+        <h2>Ingresa tu Pedido</h2>
+        <form id="karaokeForm">
+            <input type="text" id="name" placeholder="Tu nombre" required><br>
+            <input type="text" id="song" placeholder="Canción" required><br>
+            <input type="text" id="artist" placeholder="Artista" required><br>
+            <select id="type" required>
+                <option value="karaoke">Karaoke</option>
+                <option value="music">Solo Música</option>
+            </select><br>
+            <button type="submit">Añadir a la Cola</button>
+        </form>
+    </div>
+
+    <button class="admin-btn" onclick="location.href='admin.html'">Admin</button>
+
+    <footer>
+        <p>Organiza tu cola de canciones y disfruta del karaoke en esta fiesta de cumpleaños 🎶</p>
+    </footer>
+
+    <script>
+        document.getElementById('karaokeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Tu pedido ha sido añadido a la cola.');
+            // Aquí puedes manejar el almacenamiento de la canción en una base de datos o localStorage
+        });
+    </script>
+</body>
+</html>
