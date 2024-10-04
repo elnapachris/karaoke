@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración - Sistema de Karaoke</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffefd5;
+            text-align: center;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #cc0000;
+            padding: 20px;
+            color: white;
+            font-size: 24px;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        button {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #ff8533;
+        }
+        footer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        🎤 Administración del Karaoke 🎤
+    </header>
+
+    <div class="container">
+        <h2>Cola de Canciones</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Canción</th>
+                    <th>Artista</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="songQueue">
+                <!-- Las filas de canciones se agregarán dinámicamente -->
+                <tr>
+                    <td>1</td>
+                    <td>Juan</td>
+                    <td>Despacito</td>
+                    <td>Luis Fonsi</td>
+                    <td>Karaoke</td>
+                    <td>
+                        <button onclick="moveUp(this)">Subir</button>
+                        <button onclick="moveDown(this)">Bajar</button>
+                        <button onclick="removeSong(this)">Eliminar</button>
+                    </td>
+                </tr>
+                <!-- Más canciones se agregarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>Gestiona el orden y las canciones de la cola 🎶</p>
+    </footer>
+
+    <script>
+        function moveUp(button) {
+            var row = button.parentNode.parentNode;
+            var previousRow = row.previousElementSibling;
+            if (previousRow) {
+                row.parentNode.insertBefore(row, previousRow);
+            }
+        }
+
+        function moveDown(button) {
+            var row = button.parentNode.parentNode;
+            var nextRow = row.nextElementSibling;
+            if (nextRow) {
+                row.parentNode.insertBefore(nextRow, row);
+            }
+        }
+
+        function removeSong(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
+</body>
+</html>
