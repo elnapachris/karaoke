@@ -16,59 +16,53 @@
             background-color: #ff6b6b;
             color: white;
             text-align: center;
-            padding: 20px;
-            font-size: 28px;
-            border-radius: 0 0 20px 20px;
-        }
-        h2 {
-            color: #333;
-            text-align: center;
-            margin-top: 20px;
+            padding: 15px;
+            font-size: 24px;
+            border-radius: 0 0 15px 15px;
         }
         form {
             width: 80%;
-            margin: 20px auto;
+            margin: 15px auto;
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 20px;
+            padding: 10px;
+            border-radius: 15px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
         label {
-            font-size: 16px;
+            font-size: 14px;
             color: #333;
         }
         input, select {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             margin-top: 5px;
-            margin-bottom: 20px;
-            border-radius: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
             border: 1px solid #ccc;
         }
         button {
             width: 100%;
             background-color: #ff6b6b;
             color: white;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 18px;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 16px;
             border: none;
             cursor: pointer;
         }
         button:hover {
             background-color: #ff4757;
         }
-        .queue {
+        table {
             width: 80%;
             margin: 20px auto;
             border-collapse: collapse;
             background-color: #fff;
-            border-radius: 20px;
+            border-radius: 15px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
         }
-        .queue th, .queue td {
-            padding: 12px;
+        table th, table td {
+            padding: 10px;
             border: 1px solid #ddd;
             text-align: center;
         }
@@ -76,30 +70,22 @@
             background-color: #ff6b6b;
             color: white;
         }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #666;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
     <header>
-        🎤 ¡Bienvenido al Karaoke de El Napa Chris! 🎉
+        🎤 ¡Karaoke de El Napa Chris! 🎉
     </header>
-
-    <h2>Agrega tu canción</h2>
 
     <form id="karaokeForm">
         <label for="name">Nombre:</label>
-        <input type="text" id="name" required>
+        <input type="text" id="name" placeholder="Tu nombre" required>
 
         <label for="song">Canción:</label>
-        <input type="text" id="song" required>
+        <input type="text" id="song" placeholder="Nombre de la canción" required>
 
         <label for="artist">Artista:</label>
-        <input type="text" id="artist" required>
+        <input type="text" id="artist" placeholder="Artista de la canción" required>
 
         <label for="type">Tipo:</label>
         <select id="type" required>
@@ -110,8 +96,7 @@
         <button type="submit">Agregar a la Cola</button>
     </form>
 
-    <h2>Cola de Canciones</h2>
-    <table class="queue">
+    <table>
         <thead>
             <tr>
                 <th>Posición</th>
@@ -122,13 +107,9 @@
             </tr>
         </thead>
         <tbody id="songQueue">
-            <!-- Canciones agregadas dinámicamente -->
+            <!-- Lista de canciones en tiempo real -->
         </tbody>
     </table>
-
-    <div class="footer">
-        🎉 ¡Gracias por celebrar el cumpleaños de El Napa Chris! 🎉
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
@@ -151,6 +132,7 @@
         const form = document.getElementById('karaokeForm');
         const songQueue = document.getElementById('songQueue');
 
+        // Escuchar los cambios en la cola de canciones en tiempo real
         onValue(ref(database, 'songs'), (snapshot) => {
             songQueue.innerHTML = '';
             let index = 1;
@@ -168,6 +150,7 @@
             });
         });
 
+        // Añadir nueva canción a la cola
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -176,12 +159,16 @@
             const artist = document.getElementById('artist').value;
             const type = document.getElementById('type').value;
 
-            const songRef = ref(database, 'songs');
-            push(songRef, { name, song, artist, type }).then(() => {
+            push(ref(database, 'songs'), {
+                name,
+                song,
+                artist,
+                type
+            }).then(() => {
                 form.reset();
                 alert('Canción añadida a la cola.');
             }).catch((error) => {
-                console.error('Error: ', error);
+                console.error('Error al añadir la canción:', error);
             });
         });
     </script>
