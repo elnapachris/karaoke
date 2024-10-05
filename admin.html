@@ -138,33 +138,35 @@
         // Función para mover la canción hacia arriba
         window.moveUp = (index) => {
             if (index > 0) {
-                swapSongs(index, index - 1);
+                reorderSongs(index, index - 1);
             }
         };
 
         // Función para mover la canción hacia abajo
         window.moveDown = (index) => {
             if (index < songs.length - 1) {
-                swapSongs(index, index + 1);
+                reorderSongs(index, index + 1);
             }
         };
 
-        // Función para intercambiar posiciones de canciones y actualizar Firebase
-        function swapSongs(fromIndex, toIndex) {
-            const fromSong = songs[fromIndex];
-            const toSong = songs[toIndex];
+        // Función para reordenar las canciones y actualizar Firebase
+        function reorderSongs(fromIndex, toIndex) {
+            const updatedSongs = [...songs];
+            const movedSong = updatedSongs.splice(fromIndex, 1)[0];  // Extraemos la canción que se mueve
+            updatedSongs.splice(toIndex, 0, movedSong);  // La insertamos en su nueva posición
 
-            // Actualizar las posiciones en Firebase
+            // Actualizar las canciones en Firebase con el nuevo orden
             const updates = {};
-            updates[`songs/${fromSong.id}`] = { ...toSong };
-            updates[`songs/${toSong.id}`] = { ...fromSong };
+            updatedSongs.forEach((song, index) => {
+                updates[`songs/${song.id}`] = song;  // Mantenemos las canciones con sus datos pero en nueva posición
+            });
 
             update(ref(database), updates)
                 .then(() => {
-                    console.log('Posiciones actualizadas en Firebase');
+                    console.log('Posiciones reordenadas en Firebase');
                 })
                 .catch((error) => {
-                    console.error('Error al actualizar las posiciones:', error);
+                    console.error('Error al reordenar las posiciones:', error);
                 });
         }
 
