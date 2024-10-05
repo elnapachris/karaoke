@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karaoke - El Napa Chris</title>
+    <title>Karaoke - Cumpleaños El Napa Chris</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f0f8ff;
             color: #333;
             margin: 0;
             padding: 0;
         }
         header {
-            background-color: #1e90ff;
+            background-color: #4682b4;
             color: white;
             text-align: center;
             padding: 20px;
-            font-size: 24px;
+            font-size: 28px;
             border-radius: 0 0 15px 15px;
         }
         form {
@@ -31,14 +31,14 @@
             margin: 10px;
             font-size: 16px;
             border-radius: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #4682b4;
             width: 80%;
             max-width: 400px;
         }
         button {
             padding: 10px 20px;
             margin: 20px;
-            background-color: #ff6b6b;
+            background-color: #5f9ea0;
             color: white;
             border: none;
             border-radius: 8px;
@@ -49,18 +49,21 @@
             width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
-            background-color: #fff;
+            background-color: white;
             border-radius: 15px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
         th, td {
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #4682b4;
             text-align: center;
         }
         th {
-            background-color: #ffa502;
+            background-color: #4682b4;
             color: white;
+        }
+        td {
+            background-color: #f0f8ff;
         }
     </style>
 </head>
@@ -150,9 +153,9 @@
         songForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const name = document.getElementById('name').value;
-            const song = document.getElementById('song').value;
-            const artist = document.getElementById('artist').value;
+            const name = document.getElementById('name').value.trim();
+            const song = document.getElementById('song').value.trim();
+            const artist = document.getElementById('artist').value.trim();
             const type = document.getElementById('type').value;
 
             if (!name || !song || !artist) {
@@ -160,14 +163,14 @@
                 return;
             }
 
-            // Guardar en Firebase
+            // Guardar en Firebase con un timestamp como posición única
             const newSongRef = push(ref(database, 'songs'));
             newSongRef.set({
                 name,
                 song,
                 artist,
                 type,
-                position: Date.now() // Usamos timestamp como valor único para la posición
+                position: Date.now() // Usamos el tiempo como valor único para la posición
             });
 
             // Limpiar los campos del formulario
