@@ -144,7 +144,7 @@
                     <td>${song.name}</td>
                     <td>${song.song}</td>
                     <td>${song.artist}</td>
-                    <td>${song.type}</td>
+                    <td>${song.songType}</td> <!-- Cambié 'type' a 'songType' -->
                 `;
                 songQueue.appendChild(row);
             });
@@ -157,7 +157,7 @@
             const name = document.getElementById('name').value.trim();
             const song = document.getElementById('song').value.trim();
             const artist = document.getElementById('artist').value.trim();
-            const type = document.getElementById('type').value;
+            const songType = document.getElementById('type').value; // Cambié 'type' a 'songType'
 
             // Guardar en Firebase
             const newSongRef = push(ref(database, 'songs')); // Crear referencia para nueva canción
@@ -165,7 +165,7 @@
                 name,
                 song,
                 artist,
-                type,
+                songType, // Cambié 'type' a 'songType'
                 position: Date.now() // Usamos el tiempo como valor único para la posición
             })
             .then(() => {
