@@ -3,106 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administración de Karaoke - El Napa Chris</title>
+    <title>Admin Karaoke - El Napa Chris</title>
     <style>
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #ffebcd;
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f1f1;
             color: #333;
-            text-align: center;
-            margin: 0;
-            padding: 0;
         }
         header {
-            background-color: #ff4500;
+            background-color: #ff4757;
             color: white;
-            padding: 30px;
-            font-size: 30px;
-            font-weight: bold;
-            text-shadow: 2px 2px 5px black;
-        }
-        h2 {
-            color: #ff6347;
-            font-size: 24px;
-            margin-top: 20px;
+            text-align: center;
+            padding: 20px;
+            font-size: 28px;
+            border-radius: 0 0 20px 20px;
         }
         table {
             width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
-            background-color: #fffacd;
-        }
-        table, th, td {
-            border: 2px solid #ff4500;
-        }
-        th, td {
-            padding: 15px;
-            text-align: center;
-            font-size: 18px;
-        }
-        button {
-            background-color: #ff6347;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px;
-            border-radius: 10px;
-        }
-        button:hover {
-            background-color: #ff4500;
-        }
-        .move-btn {
-            font-size: 14px;
-            margin: 0 5px;
-        }
-        #birthdayBanner {
-            margin: 20px auto;
-            width: 80%;
-            border-radius: 15px;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
             overflow: hidden;
         }
-        #birthdayBanner img {
-            width: 100%;
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        button {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #ff4757;
         }
     </style>
 </head>
 <body>
     <header>
-        🎉 Administración de Karaoke - Cumpleaños de El Napa Chris 🎉
+        🎶 Panel de Administración del Karaoke 🎶
     </header>
 
-    <section id="birthdayBanner">
-        <img src="https://example.com/banner-cumpleanos.jpg" alt="Feliz Cumpleaños El Napa Chris">
-    </section>
+    <h2 style="text-align: center;">Control de la Cola de Canciones</h2>
 
-    <section>
-        <h2>Cola de Canciones</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Posición</th>
-                    <th>Nombre</th>
-                    <th>Canción</th>
-                    <th>Artista</th>
-                    <th>Tipo</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="adminQueue">
-                <!-- Las canciones se agregarán dinámicamente aquí -->
-            </tbody>
-        </table>
-    </section>
+    <table id="songQueue">
+        <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Nombre</th>
+                <th>Canción</th>
+                <th>Artista</th>
+                <th>Tipo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Canciones agregadas dinámicamente -->
+        </tbody>
+    </table>
 
-    <!-- Firebase Config -->
     <script type="module">
-        // Import Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getDatabase, ref, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
             authDomain: "karaokedatabase-c6a7d.firebaseapp.com",
@@ -114,80 +88,67 @@
             measurementId: "G-YT1DNPVQD7"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
-        const adminQueue = document.getElementById('adminQueue');
 
-        // Escuchar cambios en la base de datos y actualizar la cola en tiempo real
+        const songQueue = document.getElementById('songQueue').querySelector('tbody');
+
+        function renderQueue(songs) {
+            songQueue.innerHTML = '';
+            songs.forEach((song, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${song.name}</td>
+                    <td>${song.song}</td>
+                    <td>${song.artist}</td>
+                    <td>${song.type}</td>
+                    <td>
+                        <button onclick="moveUp(${index})">⬆</button>
+                        <button onclick="moveDown(${index})">⬇</button>
+                    </td>
+                `;
+                songQueue.appendChild(row);
+            });
+        }
+
+        let songs = [];
+
         onValue(ref(database, 'songs'), (snapshot) => {
-            adminQueue.innerHTML = ''; // Limpiar la tabla antes de añadir nuevas filas
-            let songList = [];
+            songs = [];
             snapshot.forEach((childSnapshot) => {
-                songList.push({
+                songs.push({
                     id: childSnapshot.key,
                     ...childSnapshot.val()
                 });
             });
-
-            // Llenar la tabla con las canciones y los botones de acción
-            songList.forEach((data, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${data.name}</td>
-                    <td>${data.song}</td>
-                    <td>${data.artist}</td>
-                    <td>${data.type}</td>
-                    <td>
-                        <button class="move-btn" onclick="moveSong('${data.id}', ${index}, -1)">⬆️</button>
-                        <button class="move-btn" onclick="moveSong('${data.id}', ${index}, 1)">⬇️</button>
-                        <button onclick="removeSong('${data.id}')">Eliminar</button>
-                    </td>
-                `;
-                adminQueue.appendChild(row);
-            });
+            renderQueue(songs);
         });
 
-        // Función para eliminar una canción de la base de datos
-        window.removeSong = function(songId) {
-            const songRef = ref(database, 'songs/' + songId);
-            remove(songRef).then(() => {
-                alert('Canción eliminada correctamente.');
-            }).catch((error) => {
-                console.error('Error al eliminar la canción: ', error);
-            });
+        window.moveUp = (index) => {
+            if (index > 0) {
+                swapSongs(index, index - 1);
+            }
         };
 
-        // Función para mover una canción en la cola
-        window.moveSong = function(songId, currentIndex, direction) {
-            const songRef = ref(database, 'songs');
-            let newIndex = currentIndex + direction;
-            if (newIndex < 0 || newIndex >= adminQueue.rows.length) return; // Verifica los límites de la lista
-
-            onValue(songRef, (snapshot) => {
-                let songArray = [];
-                snapshot.forEach((childSnapshot) => {
-                    songArray.push({
-                        id: childSnapshot.key,
-                        ...childSnapshot.val()
-                    });
-                });
-
-                // Intercambiar las posiciones en el array
-                const temp = songArray[currentIndex];
-                songArray[currentIndex] = songArray[newIndex];
-                songArray[newIndex] = temp;
-
-                // Actualizar la base de datos con el nuevo orden
-                songArray.forEach((song, index) => {
-                    const songPosRef = ref(database, 'songs/' + song.id);
-                    update(songPosRef, {
-                        order: index
-                    });
-                });
-            });
+        window.moveDown = (index) => {
+            if (index < songs.length - 1) {
+                swapSongs(index, index + 1);
+            }
         };
+
+        function swapSongs(fromIndex, toIndex) {
+            const temp = songs[fromIndex];
+            songs[fromIndex] = songs[toIndex];
+            songs[toIndex] = temp;
+
+            const updates = {};
+            songs.forEach((song, i) => {
+                updates[`songs/${song.id}`] = song;
+            });
+
+            update(ref(database), updates);
+        }
     </script>
 </body>
 </html>
