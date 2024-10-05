@@ -99,7 +99,7 @@
 
         // Escuchar los cambios en la base de datos
         database.ref('songs').on('value', function(snapshot) {
-            songQueue.innerHTML = ''; // Limpiar la tabla
+            songQueue.innerHTML = ''; // Limpiar la tabla antes de añadir nuevas filas
             let index = 1;
             snapshot.forEach(function(childSnapshot) {
                 const data = childSnapshot.val();
@@ -111,4 +111,77 @@
                     <td>${data.song}</td>
                     <td>${data.artist}</td>
                     <td>${data.type}</td>
-                    <td
+                    <td>
+                        <button onclick="moveUp('${childSnapshot.key}')">Subir</button>
+                        <button onclick="moveDown('${childSnapshot.key}')">Bajar</button>
+                        <button onclick="removeSong('${childSnapshot.key}')">Eliminar</button>
+                    </td>
+                `;
+                songQueue.appendChild(row);
+            });
+        });
+
+        // Función para eliminar una canción
+        function removeSong(songId) {
+            database.ref('songs/' + songId).remove();
+            alert('Canción eliminada.');
+        }
+
+        // Función para mover una canción hacia arriba
+        function moveUp(songId) {
+            // Mover una canción hacia arriba en la cola
+            database.ref('songs').once('value', function(snapshot) {
+                let songsArray = [];
+                snapshot.forEach(function(childSnapshot) {
+                    songsArray.push({
+                        key: childSnapshot.key,
+                        data: childSnapshot.val()
+                    });
+                });
+
+                const index = songsArray.findIndex(song => song.key === songId);
+                if (index > 0) {
+                    const temp = songsArray[index];
+                    songsArray[index] = songsArray[index - 1];
+                    songsArray[index - 1] = temp;
+
+                    // Reescribir toda la cola con el nuevo orden
+                    reOrderSongs(songsArray);
+                }
+            });
+        }
+
+        // Función para mover una canción hacia abajo
+        function moveDown(songId) {
+            database.ref('songs').once('value', function(snapshot) {
+                let songsArray = [];
+                snapshot.forEach(function(childSnapshot) {
+                    songsArray.push({
+                        key: childSnapshot.key,
+                        data: childSnapshot.val()
+                    });
+                });
+
+                const index = songsArray.findIndex(song => song.key === songId);
+                if (index < songsArray.length - 1) {
+                    const temp = songsArray[index];
+                    songsArray[index] = songsArray[index + 1];
+                    songsArray[index + 1] = temp;
+
+                    // Reescribir toda la cola con el nuevo orden
+                    reOrderSongs(songsArray);
+                }
+            });
+        }
+
+        // Reescribir la base de datos con el nuevo orden de canciones
+        function reOrderSongs(songsArray) {
+            const updates = {};
+            for (let i = 0; i < songsArray.length; i++) {
+                updates['/songs/' + songsArray[i].key] = songsArray[i].data;
+            }
+            database.ref().update(updates);
+        }
+    </script>
+</body>
+</html>
