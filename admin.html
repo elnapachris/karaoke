@@ -123,6 +123,7 @@
 
         let songs = [];
 
+        // Listener en tiempo real para actualizar la cola
         onValue(ref(database, 'songs'), (snapshot) => {
             songs = [];
             snapshot.forEach((childSnapshot) => {
@@ -134,31 +135,40 @@
             renderQueue(songs);
         });
 
+        // Función para mover la canción hacia arriba
         window.moveUp = (index) => {
             if (index > 0) {
                 swapSongs(index, index - 1);
             }
         };
 
+        // Función para mover la canción hacia abajo
         window.moveDown = (index) => {
             if (index < songs.length - 1) {
                 swapSongs(index, index + 1);
             }
         };
 
+        // Función para intercambiar posiciones de canciones y actualizar Firebase
         function swapSongs(fromIndex, toIndex) {
-            const temp = songs[fromIndex];
-            songs[fromIndex] = songs[toIndex];
-            songs[toIndex] = temp;
+            const fromSong = songs[fromIndex];
+            const toSong = songs[toIndex];
 
+            // Actualizar las posiciones en Firebase
             const updates = {};
-            songs.forEach((song, i) => {
-                updates[`songs/${song.id}`] = song;
-            });
+            updates[`songs/${fromSong.id}`] = { ...toSong };
+            updates[`songs/${toSong.id}`] = { ...fromSong };
 
-            update(ref(database), updates);
+            update(ref(database), updates)
+                .then(() => {
+                    console.log('Posiciones actualizadas en Firebase');
+                })
+                .catch((error) => {
+                    console.error('Error al actualizar las posiciones:', error);
+                });
         }
 
+        // Función para eliminar una canción
         window.deleteSong = (id) => {
             remove(ref(database, `songs/${id}`)).then(() => {
                 alert('Canción eliminada.');
