@@ -129,7 +129,8 @@
                     ...childSnapshot.val()
                 });
             });
-            songs.sort((a, b) => a.position - b.position); // Ordenamos las canciones por posición
+            // Ordenamos las canciones por posición
+            songs.sort((a, b) => a.position - b.position);
             renderQueue(songs);
         });
 
@@ -163,7 +164,7 @@
                 return;
             }
 
-            // Guardar en Firebase con un timestamp como posición única
+            // Guardar en Firebase
             const newSongRef = push(ref(database, 'songs'));
             newSongRef.set({
                 name,
@@ -171,10 +172,12 @@
                 artist,
                 type,
                 position: Date.now() // Usamos el tiempo como valor único para la posición
+            }).then(() => {
+                // Limpiar los campos del formulario
+                songForm.reset();
+            }).catch((error) => {
+                console.error("Error al agregar la canción:", error);
             });
-
-            // Limpiar los campos del formulario
-            songForm.reset();
         });
     </script>
 </body>
