@@ -124,8 +124,8 @@
                     <td>${song.artist}</td>
                     <td>${song.type}</td>
                     <td>
-                        <button class="move-up" ${index === 0 ? 'disabled' : ''} onclick="moveUp(${index})">⬆</button>
-                        <button class="move-down" ${index === songs.length - 1 ? 'disabled' : ''} onclick="moveDown(${index})">⬇</button>
+                        <button class="move-up" ${index === 0 ? 'disabled' : ''} onclick="moveSong(${index}, 'up')">⬆</button>
+                        <button class="move-down" ${index === songs.length - 1 ? 'disabled' : ''} onclick="moveSong(${index}, 'down')">⬇</button>
                         <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
                     </td>
                 `;
@@ -147,40 +147,35 @@
             renderQueue(songs);
         });
 
-        // Función para mover la canción hacia arriba
-        window.moveUp = (index) => {
-            if (index > 0) {
-                reorderSongs(index, index - 1);
+        // Función para mover la canción hacia arriba o hacia abajo
+        window.moveSong = (index, direction) => {
+            let newIndex;
+            if (direction === 'up' && index > 0) {
+                newIndex = index - 1;
+            } else if (direction === 'down' && index < songs.length - 1) {
+                newIndex = index + 1;
+            } else {
+                return;  // Si no es posible mover la canción, salimos de la función
             }
-        };
 
-        // Función para mover la canción hacia abajo
-        window.moveDown = (index) => {
-            if (index < songs.length - 1) {
-                reorderSongs(index, index + 1);
-            }
-        };
+            // Intercambiamos las posiciones
+            const movedSong = songs.splice(index, 1)[0];  // Extraemos la canción
+            songs.splice(newIndex, 0, movedSong);  // La insertamos en su nueva posición
 
-        // Función para reordenar las canciones y actualizar Firebase
-        function reorderSongs(fromIndex, toIndex) {
-            const updatedSongs = [...songs];
-            const movedSong = updatedSongs.splice(fromIndex, 1)[0];  // Extraemos la canción que se mueve
-            updatedSongs.splice(toIndex, 0, movedSong);  // La insertamos en su nueva posición
-
-            // Actualizar las canciones en Firebase con el nuevo orden
+            // Actualizar el orden en Firebase
             const updates = {};
-            updatedSongs.forEach((song, index) => {
-                updates[`songs/${song.id}`] = song;  // Mantenemos las canciones con sus datos pero en nueva posición
+            songs.forEach((song, idx) => {
+                updates[`songs/${song.id}`] = { ...song, position: idx };  // Actualizamos el índice (posición)
             });
 
             update(ref(database), updates)
                 .then(() => {
-                    console.log('Posiciones reordenadas en Firebase');
+                    console.log('Posición actualizada en Firebase');
                 })
                 .catch((error) => {
-                    console.error('Error al reordenar las posiciones:', error);
+                    console.error('Error al actualizar la posición:', error);
                 });
-        }
+        };
 
         // Función para eliminar una canción
         window.deleteSong = (id) => {
