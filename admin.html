@@ -58,6 +58,16 @@
             background-color: #ff4757;
             color: white;
         }
+        .clear-queue {
+            margin: 20px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -81,9 +91,11 @@
         </tbody>
     </table>
 
+    <button class="clear-queue" onclick="clearQueue()">Limpiar Cola de Canciones</button>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+        import { getDatabase, ref, onValue, update, remove, set } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
@@ -177,6 +189,19 @@
             }).catch((error) => {
                 console.error('Error al eliminar la canción:', error);
             });
+        };
+
+        // Función para limpiar la cola completa
+        window.clearQueue = () => {
+            if (confirm("¿Estás seguro de que deseas limpiar toda la cola de canciones?")) {
+                set(ref(database, 'songs'), null)
+                    .then(() => {
+                        alert("Cola de canciones limpiada.");
+                    })
+                    .catch((error) => {
+                        console.error("Error al limpiar la cola:", error);
+                    });
+            }
         };
     </script>
 </body>
