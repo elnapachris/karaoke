@@ -159,17 +159,12 @@
             const artist = document.getElementById('artist').value.trim();
             const type = document.getElementById('type').value;
 
-            if (!name || !song || !artist) {
-                alert("Por favor completa todos los campos.");
-                return;
-            }
-
             // Guardar en Firebase
             const newSongRef = push(ref(database, 'songs')); // Crear referencia para nueva canción
             newSongRef.set({ // Usar el método set para agregar los datos
                 name,
                 song,
-                artist,
+                artist
                 type,
                 position: Date.now() // Usamos el tiempo como valor único para la posición
             })
