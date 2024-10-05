@@ -50,8 +50,6 @@
             text-align: center;
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"></script>
 </head>
 <body>
     <header>
@@ -90,8 +88,13 @@
         </table>
     </section>
 
-    <script>
-        // Inicializar Firebase
+    <!-- Firebase Config -->
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
             authDomain: "karaokedatabase-c6a7d.firebaseapp.com",
@@ -99,32 +102,23 @@
             projectId: "karaokedatabase-c6a7d",
             storageBucket: "karaokedatabase-c6a7d.appspot.com",
             messagingSenderId: "340448181357",
-            appId: "1:340448181357:web:1152f5473929db98631364"
+            appId: "1:340448181357:web:1152f5473929db98631364",
+            measurementId: "G-YT1DNPVQD7"
         };
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
         const songQueue = document.getElementById('songQueue');
 
-        // Función para validar si el texto contiene palabras prohibidas
-        const bannedWords = ["groseria1", "groseria2", "groseria3"]; // Lista de palabras prohibidas
-        function containsBannedWords(input) {
-            for (let word of bannedWords) {
-                if (input.toLowerCase().includes(word)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         // Escuchar los cambios en la base de datos y actualizar la cola en tiempo real
-        database.ref('songs').on('value', function(snapshot) {
+        onValue(ref(database, 'songs'), (snapshot) => {
             songQueue.innerHTML = ''; // Limpiar la tabla antes de añadir nuevas filas
             let index = 1;
-            snapshot.forEach(function(childSnapshot) {
+            snapshot.forEach((childSnapshot) => {
                 const data = childSnapshot.val();
                 const row = document.createElement('tr');
-
                 row.innerHTML = `
                     <td>${index++}</td>
                     <td>${data.name}</td>
@@ -145,14 +139,8 @@
             const artist = document.getElementById('artist').value;
             const type = document.getElementById('type').value;
 
-            // Validar groserías
-            if (containsBannedWords(name) || containsBannedWords(song) || containsBannedWords(artist)) {
-                alert("Por favor, no uses palabras inapropiadas.");
-                return;
-            }
-
-            const newSongRef = database.ref('songs').push();
-            newSongRef.set({
+            const newSongRef = push(ref(database, 'songs'));
+            set(newSongRef, {
                 name: name,
                 song: song,
                 artist: artist,
