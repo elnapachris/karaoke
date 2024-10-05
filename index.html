@@ -165,17 +165,19 @@
             }
 
             // Guardar en Firebase
-            const newSongRef = push(ref(database, 'songs'));
-            newSongRef.set({
+            const newSongRef = push(ref(database, 'songs')); // Crear referencia para nueva canción
+            newSongRef.set({ // Usar el método set para agregar los datos
                 name,
                 song,
                 artist,
                 type,
                 position: Date.now() // Usamos el tiempo como valor único para la posición
-            }).then(() => {
+            })
+            .then(() => {
                 // Limpiar los campos del formulario
                 songForm.reset();
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 console.error("Error al agregar la canción:", error);
             });
         });
