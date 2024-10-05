@@ -3,100 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karaoke - Cumpleaños de El Napa Chris</title>
+    <title>Karaoke - El Napa Chris</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
+            background-color: #f9f9f9;
             color: #333;
             margin: 0;
             padding: 0;
         }
         header {
-            background-color: #ff6b6b;
+            background-color: #1e90ff;
             color: white;
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             font-size: 24px;
             border-radius: 0 0 15px 15px;
         }
         form {
-            width: 80%;
-            margin: 15px auto;
-            background-color: #ffffff;
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            font-size: 14px;
-            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
         }
         input, select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 10px;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
             border-radius: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
+            width: 80%;
+            max-width: 400px;
         }
         button {
-            width: 100%;
+            padding: 10px 20px;
+            margin: 20px;
             background-color: #ff6b6b;
             color: white;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 16px;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
-        }
-        button:hover {
-            background-color: #ff4757;
+            font-size: 18px;
         }
         table {
-            width: 80%;
+            width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
             background-color: #fff;
             border-radius: 15px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
-        table th, table td {
-            padding: 10px;
+        th, td {
+            padding: 12px;
             border: 1px solid #ddd;
             text-align: center;
         }
         th {
-            background-color: #ff6b6b;
+            background-color: #ffa502;
             color: white;
         }
     </style>
 </head>
 <body>
     <header>
-        🎤 ¡Karaoke de El Napa Chris! 🎉
+        🎤 Cola de Karaoke en Vivo - Cumpleaños de El Napa Chris 🎶
     </header>
 
-    <form id="karaokeForm">
-        <label for="name">Nombre:</label>
+    <form id="songForm">
         <input type="text" id="name" placeholder="Tu nombre" required>
-
-        <label for="song">Canción:</label>
-        <input type="text" id="song" placeholder="Nombre de la canción" required>
-
-        <label for="artist">Artista:</label>
-        <input type="text" id="artist" placeholder="Artista de la canción" required>
-
-        <label for="type">Tipo:</label>
-        <select id="type" required>
+        <input type="text" id="song" placeholder="Canción" required>
+        <input type="text" id="artist" placeholder="Artista" required>
+        <select id="type">
             <option value="karaoke">Karaoke</option>
-            <option value="musica">Música</option>
+            <option value="musica">Solo Música</option>
         </select>
-
         <button type="submit">Agregar a la Cola</button>
     </form>
 
-    <table>
+    <table id="songQueue">
         <thead>
             <tr>
                 <th>Posición</th>
@@ -106,8 +90,8 @@
                 <th>Tipo</th>
             </tr>
         </thead>
-        <tbody id="songQueue">
-            <!-- Lista de canciones en tiempo real -->
+        <tbody>
+            <!-- Aquí se llenarán las canciones en tiempo real -->
         </tbody>
     </table>
 
@@ -126,32 +110,44 @@
             measurementId: "G-YT1DNPVQD7"
         };
 
+        // Inicializamos Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        const form = document.getElementById('karaokeForm');
-        const songQueue = document.getElementById('songQueue');
+        const songForm = document.getElementById('songForm');
+        const songQueue = document.getElementById('songQueue').querySelector('tbody');
 
-        // Escuchar los cambios en la cola de canciones en tiempo real
+        // Listener en tiempo real para la cola de canciones
         onValue(ref(database, 'songs'), (snapshot) => {
-            songQueue.innerHTML = '';
-            let index = 1;
+            const songs = [];
             snapshot.forEach((childSnapshot) => {
-                const data = childSnapshot.val();
+                songs.push({
+                    id: childSnapshot.key,
+                    ...childSnapshot.val()
+                });
+            });
+            songs.sort((a, b) => a.position - b.position); // Ordenamos las canciones por posición
+            renderQueue(songs);
+        });
+
+        // Función para renderizar la cola de canciones en el HTML
+        function renderQueue(songs) {
+            songQueue.innerHTML = '';
+            songs.forEach((song, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${index++}</td>
-                    <td>${data.name}</td>
-                    <td>${data.song}</td>
-                    <td>${data.artist}</td>
-                    <td>${data.type}</td>
+                    <td>${index + 1}</td>
+                    <td>${song.name}</td>
+                    <td>${song.song}</td>
+                    <td>${song.artist}</td>
+                    <td>${song.type}</td>
                 `;
                 songQueue.appendChild(row);
             });
-        });
+        }
 
-        // Añadir nueva canción a la cola
-        form.addEventListener('submit', (e) => {
+        // Al agregar una nueva canción
+        songForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
             const name = document.getElementById('name').value;
@@ -159,17 +155,23 @@
             const artist = document.getElementById('artist').value;
             const type = document.getElementById('type').value;
 
-            push(ref(database, 'songs'), {
+            if (!name || !song || !artist) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+
+            // Guardar en Firebase
+            const newSongRef = push(ref(database, 'songs'));
+            newSongRef.set({
                 name,
                 song,
                 artist,
-                type
-            }).then(() => {
-                form.reset();
-                alert('Canción añadida a la cola.');
-            }).catch((error) => {
-                console.error('Error al añadir la canción:', error);
+                type,
+                position: Date.now() // Usamos timestamp como valor único para la posición
             });
+
+            // Limpiar los campos del formulario
+            songForm.reset();
         });
     </script>
 </body>
