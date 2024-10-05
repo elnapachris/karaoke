@@ -42,6 +42,10 @@
             cursor: pointer;
             font-size: 14px;
         }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
         .move-up {
             background-color: #1e90ff;
             color: white;
@@ -108,8 +112,8 @@
                     <td>${song.artist}</td>
                     <td>${song.type}</td>
                     <td>
-                        <button class="move-up" onclick="moveUp(${index})">⬆</button>
-                        <button class="move-down" onclick="moveDown(${index})">⬇</button>
+                        <button class="move-up" ${index === 0 ? 'disabled' : ''} onclick="moveUp(${index})">⬆</button>
+                        <button class="move-down" ${index === songs.length - 1 ? 'disabled' : ''} onclick="moveDown(${index})">⬇</button>
                         <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
                     </td>
                 `;
