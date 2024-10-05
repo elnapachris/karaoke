@@ -100,7 +100,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
@@ -161,10 +161,10 @@
 
             // Guardar en Firebase
             const newSongRef = push(ref(database, 'songs')); // Crear referencia para nueva canción
-            newSongRef.set({ // Usar el método set para agregar los datos
+            set(newSongRef, { // Usar el método set para agregar los datos
                 name,
                 song,
-                artist
+                artist,
                 type,
                 position: Date.now() // Usamos el tiempo como valor único para la posición
             })
