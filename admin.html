@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administración - Sistema de Karaoke</title>
+    <title>Administración de Karaoke</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #ffefd5;
+            background-color: #f0f8ff;
             text-align: center;
             color: #333;
             margin: 0;
             padding: 0;
         }
         header {
-            background-color: #cc0000;
+            background-color: #4682b4;
             padding: 20px;
             color: white;
             font-size: 24px;
         }
-        .container {
-            margin-top: 50px;
-        }
         table {
             width: 80%;
-            margin: 0 auto;
+            margin: 20px auto;
             border-collapse: collapse;
         }
         table, th, td {
@@ -35,30 +32,24 @@
             text-align: center;
         }
         button {
-            background-color: #ff6600;
+            background-color: #dc143c;
             color: white;
-            padding: 10px 20px;
-            font-size: 16px;
             border: none;
+            padding: 10px;
             cursor: pointer;
             border-radius: 5px;
         }
         button:hover {
-            background-color: #ff8533;
-        }
-        footer {
-            margin-top: 20px;
+            background-color: #a80000;
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"></script>
 </head>
 <body>
     <header>
-        🎤 Administración del Karaoke 🎤
+        🎤 Panel de Administración de Karaoke 🎤
     </header>
 
-    <div class="container">
+    <section>
         <h2>Cola de Canciones</h2>
         <table>
             <thead>
@@ -71,18 +62,19 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="songQueue">
+            <tbody id="adminQueue">
                 <!-- Las filas de canciones se agregarán dinámicamente -->
             </tbody>
         </table>
-    </div>
+    </section>
 
-    <footer>
-        <p>Gestiona el orden y las canciones de la cola 🎶</p>
-    </footer>
+    <!-- Firebase Config -->
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-    <script>
-        // Inicializar Firebase
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
             authDomain: "karaokedatabase-c6a7d.firebaseapp.com",
@@ -90,98 +82,44 @@
             projectId: "karaokedatabase-c6a7d",
             storageBucket: "karaokedatabase-c6a7d.appspot.com",
             messagingSenderId: "340448181357",
-            appId: "1:340448181357:web:1152f5473929db98631364"
+            appId: "1:340448181357:web:1152f5473929db98631364",
+            measurementId: "G-YT1DNPVQD7"
         };
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
 
-        const songQueue = document.getElementById('songQueue');
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-        // Escuchar los cambios en la base de datos
-        database.ref('songs').on('value', function(snapshot) {
-            songQueue.innerHTML = ''; // Limpiar la tabla antes de añadir nuevas filas
+        const adminQueue = document.getElementById('adminQueue');
+
+        // Escuchar los cambios en la base de datos y actualizar la cola en tiempo real
+        onValue(ref(database, 'songs'), (snapshot) => {
+            adminQueue.innerHTML = ''; // Limpiar la tabla antes de añadir nuevas filas
             let index = 1;
-            snapshot.forEach(function(childSnapshot) {
+            snapshot.forEach((childSnapshot) => {
                 const data = childSnapshot.val();
                 const row = document.createElement('tr');
-
                 row.innerHTML = `
                     <td>${index++}</td>
                     <td>${data.name}</td>
                     <td>${data.song}</td>
                     <td>${data.artist}</td>
                     <td>${data.type}</td>
-                    <td>
-                        <button onclick="moveUp('${childSnapshot.key}')">Subir</button>
-                        <button onclick="moveDown('${childSnapshot.key}')">Bajar</button>
-                        <button onclick="removeSong('${childSnapshot.key}')">Eliminar</button>
-                    </td>
+                    <td><button onclick="removeSong('${childSnapshot.key}')">Eliminar</button></td>
                 `;
-                songQueue.appendChild(row);
+                adminQueue.appendChild(row);
             });
         });
 
-        // Función para eliminar una canción
-        function removeSong(songId) {
-            database.ref('songs/' + songId).remove();
-            alert('Canción eliminada.');
-        }
-
-        // Función para mover una canción hacia arriba
-        function moveUp(songId) {
-            // Mover una canción hacia arriba en la cola
-            database.ref('songs').once('value', function(snapshot) {
-                let songsArray = [];
-                snapshot.forEach(function(childSnapshot) {
-                    songsArray.push({
-                        key: childSnapshot.key,
-                        data: childSnapshot.val()
-                    });
-                });
-
-                const index = songsArray.findIndex(song => song.key === songId);
-                if (index > 0) {
-                    const temp = songsArray[index];
-                    songsArray[index] = songsArray[index - 1];
-                    songsArray[index - 1] = temp;
-
-                    // Reescribir toda la cola con el nuevo orden
-                    reOrderSongs(songsArray);
-                }
+        // Función para eliminar una canción de la base de datos
+        window.removeSong = function(songId) {
+            const songRef = ref(database, 'songs/' + songId);
+            remove(songRef).then(() => {
+                alert('Canción eliminada correctamente.');
+            }).catch((error) => {
+                console.error('Error al eliminar la canción: ', error);
             });
-        }
-
-        // Función para mover una canción hacia abajo
-        function moveDown(songId) {
-            database.ref('songs').once('value', function(snapshot) {
-                let songsArray = [];
-                snapshot.forEach(function(childSnapshot) {
-                    songsArray.push({
-                        key: childSnapshot.key,
-                        data: childSnapshot.val()
-                    });
-                });
-
-                const index = songsArray.findIndex(song => song.key === songId);
-                if (index < songsArray.length - 1) {
-                    const temp = songsArray[index];
-                    songsArray[index] = songsArray[index + 1];
-                    songsArray[index + 1] = temp;
-
-                    // Reescribir toda la cola con el nuevo orden
-                    reOrderSongs(songsArray);
-                }
-            });
-        }
-
-        // Reescribir la base de datos con el nuevo orden de canciones
-        function reOrderSongs(songsArray) {
-            const updates = {};
-            for (let i = 0; i < songsArray.length; i++) {
-                updates['/songs/' + songsArray[i].key] = songsArray[i].data;
-            }
-            database.ref().update(updates);
-        }
+        };
     </script>
 </body>
 </html>
