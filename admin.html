@@ -150,35 +150,32 @@
         // Función para mover la canción hacia arriba
         window.moveUp = (index) => {
             if (index > 0) {
-                reorderSongs(index, index - 1);
+                swapSongs(index, index - 1);
             }
         };
 
         // Función para mover la canción hacia abajo
         window.moveDown = (index) => {
             if (index < songs.length - 1) {
-                reorderSongs(index, index + 1);
+                swapSongs(index, index + 1);
             }
         };
 
-        // Función para reordenar las canciones y actualizar Firebase
-        function reorderSongs(fromIndex, toIndex) {
-            const updatedSongs = [...songs];
-            const [movedSong] = updatedSongs.splice(fromIndex, 1)[0];  // Extraemos la canción que se mueve
-            updatedSongs.splice(toIndex, 0, movedSong);  // La insertamos en su nueva posición
+        // Función para intercambiar dos canciones y actualizar Firebase
+        function swapSongs(index1, index2) {
+            const song1 = songs[index1];
+            const song2 = songs[index2];
 
             const updates = {};
-            updatedSongs.forEach((song, index) => {
-                updates[`songs/${song.id}/position`] = index;  // Asignamos nuevas posiciones a todas las canciones
-            });
+            updates[`songs/${song1.id}/position`] = index2;
+            updates[`songs/${song2.id}/position`] = index1;
 
-            // Realiza la actualización en Firebase con el nuevo orden
             update(ref(database), updates)
                 .then(() => {
-                    console.log('Posiciones reordenadas correctamente.');
+                    console.log('Canciones intercambiadas correctamente.');
                 })
                 .catch((error) => {
-                    console.error('Error al reordenar las posiciones:', error);
+                    console.error('Error al intercambiar las canciones:', error);
                 });
         }
 
