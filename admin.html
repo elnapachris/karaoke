@@ -46,12 +46,8 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
-        .move-up {
+        .move-up, .move-down {
             background-color: #1e90ff;
-            color: white;
-        }
-        .move-down {
-            background-color: #ffa502;
             color: white;
         }
         .delete {
@@ -76,7 +72,7 @@
 </head>
 <body>
     <header>
-        🎶 Administra la Cola de Canciones - Versión <span id="version">2.9</span> 🎶
+        🎶 Administra la Cola de Canciones - Versión <span id="version">3.0</span> 🎶
     </header>
 
     <!-- Formulario de inicio de sesión -->
@@ -188,6 +184,10 @@
                 songQueue.innerHTML = '';
                 songs.forEach((song, index) => {
                     const row = document.createElement('tr');
+                    row.setAttribute('draggable', true);
+                    row.setAttribute('ondragstart', `drag(event, ${index})`);
+                    row.setAttribute('ondragover', 'allowDrop(event)');
+                    row.setAttribute('ondrop', `drop(event, ${index})`);
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${song.name}</td>
@@ -195,8 +195,6 @@
                         <td>${song.artist}</td>
                         <td>${song.songType}</td>
                         <td>
-                            <button class="move-up" ${index === 0 ? 'disabled' : ''} onclick="moveUp(${index})">⬆</button>
-                            <button class="move-down" ${index === songs.length - 1 ? 'disabled' : ''} onclick="moveDown(${index})">⬇</button>
                             <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
                         </td>
                     `;
@@ -204,15 +202,19 @@
                 });
             };
 
-            window.moveUp = function (index) {
-                if (index > 0) {
-                    moveSong(index, index - 1);
-                }
+            window.drag = function(event, index) {
+                event.dataTransfer.setData("text", index);
             };
 
-            window.moveDown = function (index) {
-                if (index < songs.length - 1) {
-                    moveSong(index, index + 1);
+            window.allowDrop = function(event) {
+                event.preventDefault();
+            };
+
+            window.drop = function(event, newIndex) {
+                event.preventDefault();
+                const oldIndex = event.dataTransfer.getData("text");
+                if (oldIndex !== newIndex) {
+                    moveSong(oldIndex, newIndex);
                 }
             };
 
