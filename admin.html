@@ -76,7 +76,7 @@
 </head>
 <body>
     <header>
-        🎶 Administra la Cola de Canciones - Versión <span id="version">2.7</span> 🎶
+        🎶 Administra la Cola de Canciones - Versión <span id="version">2.8</span> 🎶
     </header>
 
     <!-- Formulario de inicio de sesión -->
@@ -114,142 +114,145 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js"></script>
 
     <script>
-        // Configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
-            authDomain: "karaokedatabase-c6a7d.firebaseapp.com",
-            databaseURL: "https://karaokedatabase-c6a7d-default-rtdb.firebaseio.com/",
-            projectId: "karaokedatabase-c6a7d",
-            storageBucket: "karaokedatabase-c6a7d.appspot.com",
-            messagingSenderId: "340448181357",
-            appId: "1:340448181357:web:1152f5473929db98631364",
-            measurementId: "G-YT1DNPVQD7"
-        };
+        // Aseguramos que Firebase esté disponible antes de usarlo
+        document.addEventListener('DOMContentLoaded', function () {
+            // Configuración de Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
+                authDomain: "karaokedatabase-c6a7d.firebaseapp.com",
+                databaseURL: "https://karaokedatabase-c6a7d-default-rtdb.firebaseio.com/",
+                projectId: "karaokedatabase-c6a7d",
+                storageBucket: "karaokedatabase-c6a7d.appspot.com",
+                messagingSenderId: "340448181357",
+                appId: "1:340448181357:web:1152f5473929db98631364",
+                measurementId: "G-YT1DNPVQD7"
+            };
 
-        // Inicializa Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const database = firebase.database();
+            // Inicializa Firebase
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const database = firebase.database();
 
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    console.log("Usuario autenticado");
-                })
-                .catch(error => {
-                    alert("Error al iniciar sesión: " + error.message);
-                });
-        }
-
-        function logout() {
-            auth.signOut().then(() => {
-                console.log("Usuario desconectado");
-            }).catch(error => {
-                console.error("Error al cerrar sesión: ", error);
-            });
-        }
-
-        auth.onAuthStateChanged((user) => {
-            const authSection = document.getElementById('auth-section');
-            const adminContent = document.getElementById('admin-content');
-            if (user) {
-                authSection.style.display = 'none';
-                adminContent.style.display = 'block';
-                loadQueue(); // Cargar la cola al autenticarse
-            } else {
-                authSection.style.display = 'block';
-                adminContent.style.display = 'none';
-            }
-        });
-
-        function loadQueue() {
-            const songQueue = document.getElementById('songQueue').querySelector('tbody');
-            database.ref('songs').on('value', (snapshot) => {
-                const songs = [];
-                snapshot.forEach((childSnapshot) => {
-                    songs.push({
-                        id: childSnapshot.key,
-                        ...childSnapshot.val()
+            window.login = function () {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => {
+                        console.log("Usuario autenticado");
+                    })
+                    .catch(error => {
+                        alert("Error al iniciar sesión: " + error.message);
                     });
+            };
+
+            window.logout = function () {
+                auth.signOut().then(() => {
+                    console.log("Usuario desconectado");
+                }).catch(error => {
+                    console.error("Error al cerrar sesión: ", error);
                 });
-                songs.sort((a, b) => a.position - b.position);
-                renderQueue(songs);
-            });
-        }
+            };
 
-        function renderQueue(songs) {
-            const songQueue = document.getElementById('songQueue').querySelector('tbody');
-            songQueue.innerHTML = '';
-            songs.forEach((song, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${song.name}</td>
-                    <td>${song.song}</td>
-                    <td>${song.artist}</td>
-                    <td>${song.songType}</td>
-                    <td>
-                        <button class="move-up" ${index === 0 ? 'disabled' : ''} onclick="moveUp(${index})">⬆</button>
-                        <button class="move-down" ${index === songs.length - 1 ? 'disabled' : ''} onclick="moveDown(${index})">⬇</button>
-                        <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
-                    </td>
-                `;
-                songQueue.appendChild(row);
-            });
-        }
-
-        function moveUp(index) {
-            if (index > 0) {
-                moveSong(index, index - 1);
-            }
-        }
-
-        function moveDown(index) {
-            if (index < songs.length - 1) {
-                moveSong(index, index + 1);
-            }
-        }
-
-        function moveSong(oldIndex, newIndex) {
-            const updatedSongs = [...songs];
-            const [movedSong] = updatedSongs.splice(oldIndex, 1);
-            updatedSongs.splice(newIndex, 0, movedSong);
-
-            const updates = {};
-            updatedSongs.forEach((song, index) => {
-                updates[`songs/${song.id}/position`] = index;
+            auth.onAuthStateChanged((user) => {
+                const authSection = document.getElementById('auth-section');
+                const adminContent = document.getElementById('admin-content');
+                if (user) {
+                    authSection.style.display = 'none';
+                    adminContent.style.display = 'block';
+                    loadQueue(); // Cargar la cola al autenticarse
+                } else {
+                    authSection.style.display = 'block';
+                    adminContent.style.display = 'none';
+                }
             });
 
-            database.ref().update(updates)
-                .then(() => {
-                    console.log('Canciones reordenadas correctamente.');
-                })
-                .catch((error) => {
-                    console.error('Error al reordenar las canciones:', error);
+            window.loadQueue = function () {
+                const songQueue = document.getElementById('songQueue').querySelector('tbody');
+                database.ref('songs').on('value', (snapshot) => {
+                    const songs = [];
+                    snapshot.forEach((childSnapshot) => {
+                        songs.push({
+                            id: childSnapshot.key,
+                            ...childSnapshot.val()
+                        });
+                    });
+                    songs.sort((a, b) => a.position - b.position);
+                    renderQueue(songs);
                 });
-        }
+            };
 
-        function deleteSong(id) {
-            database.ref(`songs/${id}`).remove()
-                .then(() => {
-                    console.log('Canción eliminada.');
-                })
-                .catch((error) => {
-                    console.error('Error al eliminar la canción:', error);
+            window.renderQueue = function (songs) {
+                const songQueue = document.getElementById('songQueue').querySelector('tbody');
+                songQueue.innerHTML = '';
+                songs.forEach((song, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${song.name}</td>
+                        <td>${song.song}</td>
+                        <td>${song.artist}</td>
+                        <td>${song.songType}</td>
+                        <td>
+                            <button class="move-up" ${index === 0 ? 'disabled' : ''} onclick="moveUp(${index})">⬆</button>
+                            <button class="move-down" ${index === songs.length - 1 ? 'disabled' : ''} onclick="moveDown(${index})">⬇</button>
+                            <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
+                        </td>
+                    `;
+                    songQueue.appendChild(row);
                 });
-        }
+            };
 
-        function clearQueue() {
-            database.ref('songs').set(null)
-                .then(() => {
-                    alert("Cola de canciones limpiada.");
-                })
-                .catch((error) => {
-                    console.error("Error al limpiar la cola:", error);
+            window.moveUp = function (index) {
+                if (index > 0) {
+                    moveSong(index, index - 1);
+                }
+            };
+
+            window.moveDown = function (index) {
+                if (index < songs.length - 1) {
+                    moveSong(index, index + 1);
+                }
+            };
+
+            window.moveSong = function (oldIndex, newIndex) {
+                const updatedSongs = [...songs];
+                const [movedSong] = updatedSongs.splice(oldIndex, 1);
+                updatedSongs.splice(newIndex, 0, movedSong);
+
+                const updates = {};
+                updatedSongs.forEach((song, index) => {
+                    updates[`songs/${song.id}/position`] = index;
                 });
-        }
+
+                database.ref().update(updates)
+                    .then(() => {
+                        console.log('Canciones reordenadas correctamente.');
+                    })
+                    .catch((error) => {
+                        console.error('Error al reordenar las canciones:', error);
+                    });
+            };
+
+            window.deleteSong = function (id) {
+                database.ref(`songs/${id}`).remove()
+                    .then(() => {
+                        console.log('Canción eliminada.');
+                    })
+                    .catch((error) => {
+                        console.error('Error al eliminar la canción:', error);
+                    });
+            };
+
+            window.clearQueue = function () {
+                database.ref('songs').set(null)
+                    .then(() => {
+                        alert("Cola de canciones limpiada.");
+                    })
+                    .catch((error) => {
+                        console.error("Error al limpiar la cola:", error);
+                    });
+            };
+        });
     </script>
 </body>
 </html>
