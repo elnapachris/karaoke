@@ -115,13 +115,14 @@
 
         // Configuración de Firebase
         const firebaseConfig = {
-          apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
+            apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
             authDomain: "karaokedatabase-c6a7d.firebaseapp.com",
             databaseURL: "https://karaokedatabase-c6a7d-default-rtdb.firebaseio.com/",
             projectId: "karaokedatabase-c6a7d",
             storageBucket: "karaokedatabase-c6a7d.appspot.com",
             messagingSenderId: "340448181357",
-            appId: "1:340448181357:web:1152f5473929db98631364"
+            appId: "1:340448181357:web:1152f5473929db98631364",
+            measurementId: "G-YT1DNPVQD7"
         };
 
         // Inicializa Firebase
@@ -174,7 +175,7 @@
                         ...childSnapshot.val()
                     });
                 });
-                songs.sort((a, b) => a.position - b.position); // Ordenamos las canciones por posición
+                songs.sort((a, b) => a.position - b.position);
                 renderQueue(songs);
             });
         }
@@ -200,9 +201,45 @@
             });
         }
 
-        // Funciones para mover y eliminar canciones (recicladas del código previo)
+        function moveUp(index) {
+            if (index > 0) {
+                moveSong(index, index - 1);
+            }
+        }
+
+        function moveDown(index) {
+            if (index < songs.length - 1) {
+                moveSong(index, index + 1);
+            }
+        }
+
         function moveSong(oldIndex, newIndex) {
-            // Mover canción y actualizar posiciones
+            const updatedSongs = [...songs];
+            const [movedSong] = updatedSongs.splice(oldIndex, 1);
+            updatedSongs.splice(newIndex, 0, movedSong);
+
+            const updates = {};
+            updatedSongs.forEach((song, index) => {
+                updates[`songs/${song.id}/position`] = index;
+            });
+
+            update(ref(database), updates)
+                .then(() => {
+                    console.log('Canciones reordenadas correctamente.');
+                })
+                .catch((error) => {
+                    console.error('Error al reordenar las canciones:', error);
+                });
+        }
+
+        function deleteSong(id) {
+            remove(ref(database, `songs/${id}`))
+                .then(() => {
+                    console.log('Canción eliminada.');
+                })
+                .catch((error) => {
+                    console.error('Error al eliminar la canción:', error);
+                });
         }
 
         function clearQueue() {
@@ -217,4 +254,3 @@
     </script>
 </body>
 </html>
-
