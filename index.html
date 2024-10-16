@@ -73,6 +73,21 @@
     </header>
 
     <form id="songForm">
+        <select id="locationSelect">
+            <option value="bar">Barra</option>
+            <option value="mesa1">Mesa 1</option>
+            <option value="mesa2">Mesa 2</option>
+            <option value="mesa3">Mesa 3</option>
+            <option value="mesa4">Mesa 4</option>
+            <option value="mesa5">Mesa 5</option>
+            <option value="mesa6">Mesa 6</option>
+            <option value="mesa7">Mesa 7</option>
+            <option value="mesa8">Mesa 8</option>
+            <option value="mesa9">Mesa 9</option>
+            <option value="mesa10">Mesa 10</option>
+            <option value="mesa11">Mesa 11</option>
+            <option value="mesa12">Mesa 12</option>
+        </select>
         <input type="text" id="name" placeholder="Tu nombre" required>
         <input type="text" id="song" placeholder="Canción" required>
         <input type="text" id="artist" placeholder="Artista" required>
@@ -158,6 +173,7 @@
             const song = document.getElementById('song').value.trim();
             const artist = document.getElementById('artist').value.trim();
             const songType = document.getElementById('type').value; // Cambié 'type' a 'songType'
+            const location = document.getElementById('locationSelect').value; // Nueva selección
 
             // Guardar en Firebase
             const newSongRef = push(ref(database, 'songs')); // Crear referencia para nueva canción
@@ -166,6 +182,7 @@
                 song,
                 artist,
                 songType, // Cambié 'type' a 'songType'
+                location, // Agregar ubicación seleccionada
                 position: Date.now() // Usamos el tiempo como valor único para la posición
             })
             .then(() => {
