@@ -76,7 +76,7 @@
 </head>
 <body>
     <header>
-        🎶 Administra la Cola de Canciones - Versión <span id="version">2.8</span> 🎶
+        🎶 Administra la Cola de Canciones - Versión <span id="version">2.9</span> 🎶
     </header>
 
     <!-- Formulario de inicio de sesión -->
@@ -133,6 +133,8 @@
             const auth = firebase.auth();
             const database = firebase.database();
 
+            let songs = []; // Variable para almacenar la lista de canciones
+
             window.login = function () {
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
@@ -169,7 +171,7 @@
             window.loadQueue = function () {
                 const songQueue = document.getElementById('songQueue').querySelector('tbody');
                 database.ref('songs').on('value', (snapshot) => {
-                    const songs = [];
+                    songs = [];
                     snapshot.forEach((childSnapshot) => {
                         songs.push({
                             id: childSnapshot.key,
@@ -219,6 +221,7 @@
                 const [movedSong] = updatedSongs.splice(oldIndex, 1);
                 updatedSongs.splice(newIndex, 0, movedSong);
 
+                // Actualizar las posiciones en la base de datos
                 const updates = {};
                 updatedSongs.forEach((song, index) => {
                     updates[`songs/${song.id}/position`] = index;
