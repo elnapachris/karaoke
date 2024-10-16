@@ -68,12 +68,9 @@
             font-size: 16px;
             cursor: pointer;
         }
-        #auth-section, #register-section {
+        #auth-section {
             text-align: center;
             margin: 20px;
-        }
-        #register-section {
-            display: none; /* Inicialmente oculto */
         }
     </style>
 </head>
@@ -88,14 +85,6 @@
         <input type="email" id="email" placeholder="Correo electrónico">
         <input type="password" id="password" placeholder="Contraseña">
         <button id="login-button">Iniciar Sesión</button>
-    </div>
-
-    <!-- Formulario de registro de nuevos usuarios (aparece solo cuando hay un usuario autenticado) -->
-    <div id="register-section">
-        <h2>Registrar Nuevo Administrador</h2>
-        <input type="email" id="register-email" placeholder="Correo electrónico">
-        <input type="password" id="register-password" placeholder="Contraseña">
-        <button onclick="register()">Registrar</button>
     </div>
 
     <!-- Contenido para administradores autenticados -->
@@ -121,12 +110,12 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
         import { getDatabase, ref, onValue, update, remove, set } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
         // Configuración de Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
+          apiKey: "AIzaSyCZO0_L7XnP4E-ChOhvDERTjLhyVZhgqWY",
             authDomain: "karaokedatabase-c6a7d.firebaseapp.com",
             databaseURL: "https://karaokedatabase-c6a7d-default-rtdb.firebaseio.com/",
             projectId: "karaokedatabase-c6a7d",
@@ -154,18 +143,6 @@
                 });
         }
 
-        function register() {
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            createUserWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    alert("Usuario registrado exitosamente");
-                })
-                .catch(error => {
-                    alert("Error al registrar: " + error.message);
-                });
-        }
-
         function logout() {
             signOut(auth).then(() => {
                 console.log("Usuario desconectado");
@@ -175,16 +152,69 @@
         }
 
         onAuthStateChanged(auth, (user) => {
+            const authSection = document.getElementById('auth-section');
+            const adminContent = document.getElementById('admin-content');
             if (user) {
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('register-section').style.display = 'block'; // Ahora visible
-                document.getElementById('admin-content').style.display = 'block';
+                authSection.style.display = 'none';
+                adminContent.style.display = 'block';
+                loadQueue(); // Cargar la cola al autenticarse
             } else {
-                document.getElementById('auth-section').style.display = 'block';
-                document.getElementById('register-section').style.display = 'none';
-                document.getElementById('admin-content').style.display = 'none';
+                authSection.style.display = 'block';
+                adminContent.style.display = 'none';
             }
         });
+
+        function loadQueue() {
+            const songQueue = document.getElementById('songQueue').querySelector('tbody');
+            onValue(ref(database, 'songs'), (snapshot) => {
+                const songs = [];
+                snapshot.forEach((childSnapshot) => {
+                    songs.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+                songs.sort((a, b) => a.position - b.position); // Ordenamos las canciones por posición
+                renderQueue(songs);
+            });
+        }
+
+        function renderQueue(songs) {
+            const songQueue = document.getElementById('songQueue').querySelector('tbody');
+            songQueue.innerHTML = '';
+            songs.forEach((song, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${song.name}</td>
+                    <td>${song.song}</td>
+                    <td>${song.artist}</td>
+                    <td>${song.songType}</td>
+                    <td>
+                        <button class="move-up" ${index === 0 ? 'disabled' : ''} onclick="moveUp(${index})">⬆</button>
+                        <button class="move-down" ${index === songs.length - 1 ? 'disabled' : ''} onclick="moveDown(${index})">⬇</button>
+                        <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
+                    </td>
+                `;
+                songQueue.appendChild(row);
+            });
+        }
+
+        // Funciones para mover y eliminar canciones (recicladas del código previo)
+        function moveSong(oldIndex, newIndex) {
+            // Mover canción y actualizar posiciones
+        }
+
+        function clearQueue() {
+            set(ref(database, 'songs'), null)
+                .then(() => {
+                    alert("Cola de canciones limpiada.");
+                })
+                .catch((error) => {
+                    console.error("Error al limpiar la cola:", error);
+                });
+        }
     </script>
 </body>
 </html>
+
