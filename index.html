@@ -73,22 +73,24 @@
     </header>
 
     <form id="songForm">
-        <select id="locationSelect">
-            <option value="bar">Barra</option>
-            <option value="mesa1">Mesa 1</option>
-            <option value="mesa2">Mesa 2</option>
-            <option value="mesa3">Mesa 3</option>
-            <option value="mesa4">Mesa 4</option>
-            <option value="mesa5">Mesa 5</option>
-            <option value="mesa6">Mesa 6</option>
-            <option value="mesa7">Mesa 7</option>
-            <option value="mesa8">Mesa 8</option>
-            <option value="mesa9">Mesa 9</option>
-            <option value="mesa10">Mesa 10</option>
-            <option value="mesa11">Mesa 11</option>
-            <option value="mesa12">Mesa 12</option>
-        </select>
-        <input type="text" id="name" placeholder="Tu nombre" required>
+        <div style="display: flex; align-items: center;">
+            <select id="locationSelect" style="margin-right: 10px;">
+                <option value="mesa1">Mesa 1</option>
+                <option value="mesa2">Mesa 2</option>
+                <option value="mesa3">Mesa 3</option>
+                <option value="mesa4">Mesa 4</option>
+                <option value="mesa5">Mesa 5</option>
+                <option value="mesa6">Mesa 6</option>
+                <option value="mesa7">Mesa 7</option>
+                <option value="mesa8">Mesa 8</option>
+                <option value="mesa9">Mesa 9</option>
+                <option value="mesa10">Mesa 10</option>
+                <option value="mesa11">Mesa 11</option>
+                <option value="mesa12">Mesa 12</option>
+                <option value="bar">Barra</option>
+            </select>
+            <input type="text" id="name" placeholder="Tu nombre" required style="flex: 1;">
+        </div>
         <input type="text" id="song" placeholder="Canción" required>
         <input type="text" id="artist" placeholder="Artista" required>
         <select id="type">
@@ -106,6 +108,7 @@
                 <th>Canción</th>
                 <th>Artista</th>
                 <th>Tipo</th>
+                <th>Ubicación</th> <!-- Nueva columna para ubicación -->
             </tr>
         </thead>
         <tbody>
@@ -160,6 +163,7 @@
                     <td>${song.song}</td>
                     <td>${song.artist}</td>
                     <td>${song.songType}</td> <!-- Cambié 'type' a 'songType' -->
+                    <td>${song.location}</td> <!-- Nueva columna para ubicación -->
                 `;
                 songQueue.appendChild(row);
             });
