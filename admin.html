@@ -76,7 +76,7 @@
 </head>
 <body>
     <header>
-        🎶 Administra la Cola de Canciones - Versión <span id="version">2.6</span> 🎶
+        🎶 Administra la Cola de Canciones - Versión <span id="version">2.7</span> 🎶
     </header>
 
     <!-- Formulario de inicio de sesión -->
@@ -108,9 +108,11 @@
         <button onclick="logout()">Cerrar Sesión</button>
     </div>
 
+    <!-- Incluyendo el SDK estándar de Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js"></script>
+
     <script>
         // Configuración de Firebase
         const firebaseConfig = {
@@ -125,7 +127,7 @@
         };
 
         // Inicializa Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
 
