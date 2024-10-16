@@ -69,9 +69,11 @@
             cursor: pointer;
         }
         #auth-section, #register-section {
-            display: none;
             text-align: center;
             margin: 20px;
+        }
+        #register-section {
+            display: none; /* Inicialmente oculto */
         }
     </style>
 </head>
@@ -85,10 +87,10 @@
         <h2>Iniciar Sesión</h2>
         <input type="email" id="email" placeholder="Correo electrónico">
         <input type="password" id="password" placeholder="Contraseña">
-        <button onclick="login()">Iniciar Sesión</button>
+        <button id="login-button">Iniciar Sesión</button>
     </div>
 
-    <!-- Formulario de registro de nuevos usuarios (opcional) -->
+    <!-- Formulario de registro de nuevos usuarios (aparece solo cuando hay un usuario autenticado) -->
     <div id="register-section">
         <h2>Registrar Nuevo Administrador</h2>
         <input type="email" id="register-email" placeholder="Correo electrónico">
@@ -138,12 +140,8 @@
         const auth = getAuth(app);
         const database = getDatabase(app);
 
-        const songQueue = document.getElementById('songQueue').querySelector('tbody');
-        const authSection = document.getElementById('auth-section');
-        const adminContent = document.getElementById('admin-content');
-        const registerSection = document.getElementById('register-section');
+        document.getElementById('login-button').addEventListener('click', login);
 
-        // Función para iniciar sesión
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -156,7 +154,6 @@
                 });
         }
 
-        // Función para registrar un nuevo usuario
         function register() {
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
@@ -169,7 +166,6 @@
                 });
         }
 
-        // Función para cerrar sesión
         function logout() {
             signOut(auth).then(() => {
                 console.log("Usuario desconectado");
@@ -178,21 +174,17 @@
             });
         }
 
-        // Verifica si hay un usuario autenticado
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                authSection.style.display = 'none';
-                registerSection.style.display = 'none';
-                adminContent.style.display = 'block';
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('register-section').style.display = 'block'; // Ahora visible
+                document.getElementById('admin-content').style.display = 'block';
             } else {
-                authSection.style.display = 'block';
-                registerSection.style.display = 'block';
-                adminContent.style.display = 'none';
+                document.getElementById('auth-section').style.display = 'block';
+                document.getElementById('register-section').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'none';
             }
         });
-
-        // Funciones existentes de manejo de la cola...
-        // (Aquí se incluyen las funciones renderQueue, moveSong, deleteSong, clearQueue, etc.)
     </script>
 </body>
 </html>
