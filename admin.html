@@ -68,11 +68,30 @@
             text-align: center;
             margin: 20px;
         }
+        /* Nuevas clases para ajustar el ancho de las columnas */
+        .nro-pos {
+            width: 40px; /* Ajustar tamaño de la columna de posición */
+        }
+        .nro-mesa {
+            width: 80px; /* Ajustar tamaño de la columna de Nro de Mesa */
+        }
+        .nombre {
+            width: 100px; /* Ajustar tamaño de la columna de Nombre */
+        }
+        .artista {
+            width: 120px; /* Ajustar tamaño de la columna de Artista */
+        }
+        .cancion {
+            width: 140px; /* Ajustar tamaño de la columna de Canción */
+        }
+        .tipo {
+            width: 70px; /* Ajustar tamaño de la columna de Tipo */
+        }
     </style>
 </head>
 <body>
     <header>
-        🎶 Administra la Cola de Canciones - Versión <span id="version">3.0</span> 🎶
+        🎶 Administra la Cola de Canciones - Versión <span id="version">3.1</span> 🎶
     </header>
 
     <!-- Formulario de inicio de sesión -->
@@ -88,11 +107,12 @@
         <table id="songQueue">
             <thead>
                 <tr>
-                    <th>Posición</th>
-                    <th>Nombre</th>
-                    <th>Canción</th>
-                    <th>Artista</th>
-                    <th>Tipo</th>
+                    <th class="nro-pos">Posición</th>
+                    <th class="nro-mesa">Nro de Mesa</th>
+                    <th class="nombre">Nombre</th>
+                    <th class="artista">Artista</th>
+                    <th class="cancion">Canción</th>
+                    <th class="tipo">Tipo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -189,11 +209,12 @@
                     row.setAttribute('ondragover', 'allowDrop(event)');
                     row.setAttribute('ondrop', `drop(event, ${index})`);
                     row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${song.name}</td>
-                        <td>${song.song}</td>
-                        <td>${song.artist}</td>
-                        <td>${song.songType}</td>
+                        <td class="nro-pos">${index + 1}</td>
+                        <td class="nro-mesa">${song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
+                        <td class="nombre">${song.name}</td>
+                        <td class="artista">${song.artist}</td>
+                        <td class="cancion">${song.song}</td>
+                        <td class="tipo">${song.songType}</td>
                         <td>
                             <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
                         </td>
