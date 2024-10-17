@@ -75,6 +75,9 @@
         .nro-mesa {
             width: 80px; /* Ajustar tamaño de la columna de Nro de Mesa */
         }
+        .acciones {
+            width: 80px; /* Ajustar tamaño de la columna de Acciones */
+        }
         .nombre {
             width: 100px; /* Ajustar tamaño de la columna de Nombre */
         }
@@ -91,7 +94,7 @@
 </head>
 <body>
     <header>
-        🎶 Administra la Cola de Canciones - Versión <span id="version">3.1</span> 🎶
+        🎶 Administra la Cola de Canciones - Versión <span id="version">3.2</span> 🎶
     </header>
 
     <!-- Formulario de inicio de sesión -->
@@ -113,7 +116,7 @@
                     <th class="artista">Artista</th>
                     <th class="cancion">Canción</th>
                     <th class="tipo">Tipo</th>
-                    <th>Acciones</th>
+                    <th class="acciones">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -210,12 +213,12 @@
                     row.setAttribute('ondrop', `drop(event, ${index})`);
                     row.innerHTML = `
                         <td class="nro-pos">${index + 1}</td>
-                        <td class="nro-mesa">${song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
+                        <td class="nro-mesa">${capitalize(song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1")}</td> <!-- Capitalizar Nro de Mesa -->
                         <td class="nombre">${song.name}</td>
                         <td class="artista">${song.artist}</td>
                         <td class="cancion">${song.song}</td>
                         <td class="tipo">${song.songType}</td>
-                        <td>
+                        <td class="acciones">
                             <button class="delete" onclick="deleteSong('${song.id}')">Eliminar</button>
                         </td>
                     `;
@@ -278,6 +281,14 @@
                         console.error("Error al limpiar la cola:", error);
                     });
             };
+
+            // Función para capitalizar el texto
+            function capitalize(text) {
+                return text
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+            }
         });
     </script>
 </body>
