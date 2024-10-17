@@ -176,7 +176,7 @@
                     <td>${song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
                     <td>${capitalize(song.name || "Karaoke El Napa Chris")}</td> <!-- Capitalizar nombre -->
                     <td>${capitalize(song.song)}</td> <!-- Capitalizar canción -->
-                    <td>${song.artist}</td>
+                    <td>${capitalize(song.artist)}</td> <!-- Capitalizar artista -->
                     <td>${capitalize(song.songType)}</td> <!-- Capitalizar tipo -->
                 `;
                 songQueue.appendChild(row);
