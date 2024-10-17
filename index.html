@@ -76,6 +76,18 @@
         .nro-mesa {
             width: 80px; /* Ajustar tamaño de la columna de Nro de Mesa */
         }
+        .tipo {
+            width: 70px; /* Ajustar tamaño de la columna de Tipo */
+        }
+        .nombre {
+            width: 100px; /* Ajustar tamaño de la columna de Nombre */
+        }
+        .artista {
+            width: 120px; /* Ajustar tamaño de la columna de Artista */
+        }
+        .cancion {
+            width: 140px; /* Ajustar tamaño de la columna de Canción */
+        }
     </style>
 </head>
 <body>
@@ -115,12 +127,12 @@
     <table id="songQueue">
         <thead>
             <tr>
-                <th class="nro-pos">Posición</th> <!-- Ajuste de clase para el tamaño -->
-                <th class="nro-mesa">Nro de Mesa</th> <!-- Ajuste de clase para el tamaño -->
-                <th>Nombre</th>
-                <th>Canción</th>
-                <th>Artista</th>
-                <th>Tipo</th>
+                <th class="nro-pos">Posición</th>
+                <th class="nro-mesa">Nro de Mesa</th>
+                <th class="nombre">Nombre</th>
+                <th class="artista">Artista</th> <!-- Cambiar el orden -->
+                <th class="cancion">Canción</th> <!-- Cambiar el orden -->
+                <th class="tipo">Tipo</th>
             </tr>
         </thead>
         <tbody>
@@ -181,8 +193,8 @@
                     <td class="nro-pos">${index + 1}</td>
                     <td>${song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
                     <td>${capitalize(song.name || "Karaoke El Napa Chris")}</td> <!-- Capitalizar nombre -->
-                    <td>${capitalize(song.song)}</td> <!-- Capitalizar canción -->
                     <td>${capitalize(song.artist)}</td> <!-- Capitalizar artista -->
+                    <td>${capitalize(song.song)}</td> <!-- Capitalizar canción -->
                     <td>${capitalize(song.songType)}</td> <!-- Capitalizar tipo -->
                 `;
                 songQueue.appendChild(row);
