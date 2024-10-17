@@ -165,11 +165,11 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${song.location || "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
+                    <td>${song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
                     <td>${song.name || "Karaoke El Napa Chris"}</td> <!-- Valor por defecto para nombre -->
                     <td>${song.song}</td>
                     <td>${song.artist}</td>
-                    <td>${song.songType}</td> <!-- Cambié 'type' a 'songType' -->
+                    <td>${song.songType.charAt(0).toUpperCase() + song.songType.slice(1)}</td> <!-- Capitalizar tipo -->
                 `;
                 songQueue.appendChild(row);
             });
