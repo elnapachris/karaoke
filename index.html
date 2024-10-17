@@ -92,7 +92,7 @@
                 <option value="mesa10">Mesa 10</option>
                 <option value="mesa11">Mesa 11</option>
                 <option value="mesa12">Mesa 12</option>
-                <option value="barra">Barra</option> <!-- Mantener "Barra" -->
+                <option value="barra">Barra</option> <!-- "Barra" con mayúscula -->
             </select>
             <input type="text" id="name" placeholder="Tu nombre" required style="margin-left: 10px;">
         </div>
@@ -110,7 +110,7 @@
         <thead>
             <tr>
                 <th>Posición</th>
-                <th>Nro de Mesa</th> <!-- Mantener como estaba -->
+                <th>Nro de Mesa</th>
                 <th>Nombre</th>
                 <th>Canción</th>
                 <th>Artista</th>
@@ -158,6 +158,14 @@
             renderQueue(songs);
         });
 
+        // Función para capitalizar el texto
+        function capitalize(text) {
+            return text
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+
         // Función para renderizar la cola de canciones en el HTML
         function renderQueue(songs) {
             songQueue.innerHTML = '';
@@ -166,10 +174,10 @@
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
-                    <td>${song.name || "Karaoke El Napa Chris"}</td> <!-- Valor por defecto para nombre -->
-                    <td>${song.song}</td>
+                    <td>${capitalize(song.name || "Karaoke El Napa Chris")}</td> <!-- Capitalizar nombre -->
+                    <td>${capitalize(song.song)}</td> <!-- Capitalizar canción -->
                     <td>${song.artist}</td>
-                    <td>${song.songType.charAt(0).toUpperCase() + song.songType.slice(1)}</td> <!-- Capitalizar tipo -->
+                    <td>${capitalize(song.songType)}</td> <!-- Capitalizar tipo -->
                 `;
                 songQueue.appendChild(row);
             });
