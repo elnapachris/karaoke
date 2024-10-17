@@ -26,14 +26,19 @@
             align-items: center;
             margin: 20px;
         }
-        input, select {
+        .location-name-container {
+            display: flex;
+            align-items: center;
+            width: 80%;
+            max-width: 400px;
+        }
+        select, input {
             padding: 10px;
             margin: 10px;
             font-size: 16px;
             border-radius: 8px;
             border: 1px solid #4682b4;
-            width: 80%;
-            max-width: 400px;
+            flex: 1;
         }
         button {
             padding: 10px 20px;
@@ -73,7 +78,7 @@
     </header>
 
     <form id="songForm">
-        <div style="display: flex; align-items: center;">
+        <div class="location-name-container">
             <select id="locationSelect" style="margin-right: 10px;">
                 <option value="mesa1">Mesa 1</option>
                 <option value="mesa2">Mesa 2</option>
@@ -89,13 +94,14 @@
                 <option value="mesa12">Mesa 12</option>
                 <option value="bar">Barra</option>
             </select>
-            <input type="text" id="name" placeholder="Tu nombre" required style="flex: 1;">
+            <input type="text" id="name" placeholder="Tu nombre" required style="margin-left: 10px;">
         </div>
         <input type="text" id="song" placeholder="Canción" required>
         <input type="text" id="artist" placeholder="Artista" required>
         <select id="type">
             <option value="karaoke">Karaoke</option>
             <option value="musica">Solo Música</option>
+            <option value="letra">Letra</option> <!-- Nueva opción -->
         </select>
         <button type="submit">Agregar a la Cola</button>
     </form>
@@ -104,11 +110,11 @@
         <thead>
             <tr>
                 <th>Posición</th>
+                <th>Nro de Mesa</th> <!-- Nueva columna para el número de mesa -->
                 <th>Nombre</th>
                 <th>Canción</th>
                 <th>Artista</th>
                 <th>Tipo</th>
-                <th>Ubicación</th> <!-- Nueva columna para ubicación -->
             </tr>
         </thead>
         <tbody>
@@ -159,11 +165,11 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${song.name}</td>
+                    <td>${song.location || "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
+                    <td>${song.name || "Karaoke El Napa Chris"}</td> <!-- Valor por defecto para nombre -->
                     <td>${song.song}</td>
                     <td>${song.artist}</td>
                     <td>${song.songType}</td> <!-- Cambié 'type' a 'songType' -->
-                    <td>${song.location}</td> <!-- Nueva columna para ubicación -->
                 `;
                 songQueue.appendChild(row);
             });
@@ -173,7 +179,7 @@
         songForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const name = document.getElementById('name').value.trim();
+            const name = document.getElementById('name').value.trim() || "Karaoke El Napa Chris"; // Valor por defecto
             const song = document.getElementById('song').value.trim();
             const artist = document.getElementById('artist').value.trim();
             const songType = document.getElementById('type').value; // Cambié 'type' a 'songType'
