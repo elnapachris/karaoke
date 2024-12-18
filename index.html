@@ -1,140 +1,185 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Karaoke - Los Tronquitos Grill</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: white;
-            background-image: url('tronquitos_grill_image.jpg'); /* Reemplaza por la imagen de fondo */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        header {
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #e74c3c;
-            text-align: center;
-            padding: 20px;
-            font-size: 32px;
-            border-bottom: 4px solid #e74c3c;
-            text-transform: uppercase;
-        }
-
-        form {
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px auto;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-
-        form input, form select, form button {
-            width: calc(100% - 20px);
-            margin: 10px;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-            display: block;
-            box-sizing: border-box;
-        }
-
-        form button {
-            background-color: #e74c3c;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #444;
-        }
-
-        th {
-            background-color: rgba(0, 0, 0, 0.9);
-            color: #e74c3c;
-            text-transform: uppercase;
-        }
-
-        tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            margin: 20px;
-            color: #f0f8ff;
-            font-size: 14px;
-        }
-
-        .song-type {
-            color: #1e90ff;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karaoke - Cumpleaños El Napa Chris</title>
+<style>
+body {
+font-family: 'Arial', sans-serif;
+background-color: #f0f8ff;
+color: #333;
+margin: 0;
+padding: 0;
+}
+header {
+background-color: #4682b4;
+color: white;
+text-align: center;
+padding: 20px;
+font-size: 28px;
+border-radius: 0 0 15px 15px;
+}
+form {
+display: flex;
+flex-direction: column;
+align-items: center;
+margin: 20px;
+}
+.location-name-container {
+display: flex;
+align-items: center;
+width: 80%;
+max-width: 400px;
+}
+select, input {
+padding: 10px;
+margin: 10px;
+font-size: 16px;
+border-radius: 8px;
+border: 1px solid #4682b4;
+flex: 1;
+}
+button {
+padding: 10px 20px;
+margin: 20px;
+background-color: #5f9ea0;
+color: white;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 18px;
+}
+table {
+width: 90%;
+margin: 20px auto;
+border-collapse: collapse;
+background-color: white;
+border-radius: 15px;
+box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+th, td {
+padding: 12px;
+border: 1px solid #4682b4;
+text-align: center;
+}
+th {
+background-color: #4682b4;
+color: white;
+}
+td {
+background-color: #f0f8ff;
+}
+.nro-pos {
+width: 40px; /* Ajustar tamaño de la columna de posición */
+}
+.nro-mesa {
+width: 80px; /* Ajustar tamaño de la columna de Nro de Mesa */
+}
+.tipo {
+width: 70px; /* Ajustar tamaño de la columna de Tipo */
+}
+.nombre {
+width: 100px; /* Ajustar tamaño de la columna de Nombre */
+}
+.artista {
+width: 120px; /* Ajustar tamaño de la columna de Artista */
+}
+.cancion {
+width: 140px; /* Ajustar tamaño de la columna de Canción */
+}
+</style>
 </head>
 <body>
-    <header>
-        🎤 Sistema Karaoke - Los Tronquitos Grill 🎶
-    </header>
+<header>
+🎤 Cola de Karaoke en Vivo - Cumpleaños de El Napa Chris 🎶
+</header>
 
-    <form id="songForm">
-        <select id="locationSelect">
-            <option value="mesa1">Mesa 1</option>
-            <option value="mesa2">Mesa 2</option>
-            <option value="barra">Barra</option>
-        </select>
-        <input type="text" id="name" placeholder="Tu nombre">
-        <input type="text" id="song" placeholder="Canción" required>
-        <input type="text" id="artist" placeholder="Artista" required>
-        <select id="type">
-            <option value="karaoke">Karaoke</option>
-            <option value="musica">Solo Música</option>
-        </select>
-        <button type="submit">Agregar a la Cola</button>
-    </form>
+<form id="songForm">
+<div class="location-name-container">
+<select id="locationSelect" style="margin-right: 10px;">
+<option value="mesa1">Mesa 1</option>
+<option value="mesa2">Mesa 2</option>
+<option value="mesa3">Mesa 3</option>
+<option value="mesa4">Mesa 4</option>
+<option value="mesa5">Mesa 5</option>
+<option value="mesa6">Mesa 6</option>
+<option value="mesa7">Mesa 7</option>
+<option value="mesa8">Mesa 8</option>
+<option value="mesa9">Mesa 9</option>
+<option value="mesa10">Mesa 10</option>
+<option value="mesa11">Mesa 11</option>
+<option value="mesa12">Mesa 12</option>
+<option value="barra">Barra</option> <!-- "Barra" con mayúscula -->
+</select>
+<input type="text" id="name" placeholder="Tu nombre" style="margin-left: 10px;">
+</div>
+<input type="text" id="song" placeholder="Canción" required>
+<input type="text" id="artist" placeholder="Artista" required>
+<select id="type">
+<option value="karaoke">Karaoke</option>
+<option value="musica">Solo Música</option>
+<option value="letra">Letra</option> <!-- Nueva opción -->
+</select>
+<button type="submit">Agregar a la Cola</button>
+</form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Posición</th>
-                <th>Mesa</th>
-                <th>Nombre</th>
-                <th>Artista</th>
-                <th>Canción</th>
-                <th>Tipo</th>
-            </tr>
-        </thead>
-        <tbody id="songQueue">
-            <!-- Canciones agregadas se mostrarán aquí -->
-        </tbody>
-    </table>
+<table id="songQueue">
+<thead>
+<tr>
+<th class="nro-pos">Posición</th>
+<th class="nro-mesa">Nro de Mesa</th>
+<th class="nombre">Nombre</th>
+                <th class="artista">Artista</th> <!-- Cambiar el orden -->
+                <th class="cancion">Canción</th> <!-- Cambiar el orden -->
+                <th class="artista">Artista</th>
+                <th class="cancion">Canción</th>
+<th class="tipo">Tipo</th>
+</tr>
+</thead>
+@@ -191,44 +191,44 @@
+const row = document.createElement('tr');
+row.innerHTML = `
+                   <td class="nro-pos">${index + 1}</td>
+                    <td>${song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1"}</td> <!-- Mostrar Nro de Mesa o valor por defecto -->
+                    <td>${capitalize(song.location ? song.location.replace('mesa', 'Mesa ') : "Mesa 1")}</td> <!-- Capitalizar y mostrar Nro de Mesa o valor por defecto -->
+                   <td>${capitalize(song.name || "Karaoke El Napa Chris")}</td> <!-- Capitalizar nombre -->
+                   <td>${capitalize(song.artist)}</td> <!-- Capitalizar artista -->
+                   <td>${capitalize(song.song)}</td> <!-- Capitalizar canción -->
+                   <td>${capitalize(song.songType)}</td> <!-- Capitalizar tipo -->
+               `;
+songQueue.appendChild(row);
+});
+}
 
-    <footer>
-        🎶 La mejor música y grills 🎉
-    </footer>
+// Al agregar una nueva canción
+songForm.addEventListener('submit', (e) => {
+e.preventDefault();
+
+const name = document.getElementById('name').value.trim() || "Karaoke El Napa Chris"; // Valor por defecto
+const song = document.getElementById('song').value.trim();
+const artist = document.getElementById('artist').value.trim();
+const songType = document.getElementById('type').value; // Cambié 'type' a 'songType'
+const location = document.getElementById('locationSelect').value; // Nueva selección
+
+// Guardar en Firebase
+const newSongRef = push(ref(database, 'songs')); // Crear referencia para nueva canción
+set(newSongRef, { // Usar el método set para agregar los datos
+name,
+song,
+artist,
+songType, // Cambié 'type' a 'songType'
+location, // Agregar ubicación seleccionada
+position: Date.now() // Usamos el tiempo como valor único para la posición
+})
+.then(() => {
+// Limpiar los campos del formulario
+songForm.reset();
+})
+.catch((error) => {
+console.error("Error al agregar la canción:", error);
+});
+});
+</script>
 </body>
 </html>
